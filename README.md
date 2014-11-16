@@ -261,7 +261,7 @@ Publishing to the timeline requires the [`publish_actions`](https://developers.f
 - (void)requestPublishPermissions:(void(^)(BOOL granted, NSError *error))responseHandler
 ```
 
-`(BOOL)isPublishPermissionsAvailableQuickCheck` checks if [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission is granted to the current `access token`. It is 99% accurate since the permissions granted could have changed since the `access token` was issued. The permissions could also be changed by the user *via* the Facebook website external to your app. The method will immediately return however since it does not make any REST API calls.
+`(BOOL)isPublishPermissionsAvailableQuickCheck` checks if [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission is granted to the current `access token.` It is 99% accurate since the permissions granted could have changed since the `access token` was issued. The permissions could also be changed by the user *via* the Facebook website external to your app. The method will immediately return however since it does not make any REST API calls.
 
 `(void)isPublishPermissionsAvailableFullCheck` will perform a 100% accurate check for [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission. It will make a REST API call and will return with a `BOOL result` response. If `result==YES,` then publishing permission is available.
 
@@ -287,6 +287,16 @@ NSDictionary *params = @{@"link" : @"the url we want to share.",
 
 
 
+NSDictionary *params = @{@"link" : @"http://www.google.com",
+                             @"name" : @"Google",
+                             @"caption" : @"#1 search engine",
+                             @"picture" : @"https://www.google.com/images/srpr/logo11w.png",
+                             @"description" : @"Home page Logo",
+                             @"message" : @"hello"
+                             };
+
+
+![Screen shot of a sample Share Post](https://raw.github.com/pjebs/EasySocial/master/share_post.png)
 
 ### Notifications
 
