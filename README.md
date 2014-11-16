@@ -269,7 +269,7 @@ If publishing permission is not available, you will have to request it by callin
 
 ### Methods - Publishing Content
 
-To publish and share content, [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission is required. By calling the `publishStoryWithParams:completion:` method below, it automatically also calls `requestPublishPermissions:.`
+To publish and share content, [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission is required. By calling the `publishStoryWithParams:completion:` method below, it automatically also calls the `requestPublishPermissions:` method.
 
 ```objective-c
 - (void)publishStoryWithParams:(NSDictionary *)params completion:(void(^)(BOOL success, NSError *error))completion
@@ -332,7 +332,7 @@ The delegate methods are called before and after:
 
 ### Diagnostics
 
-`@property BOOL preventAppShutDown` - iOS 8 incorporates a different Memory Management Policy. If you find that your app is getting shut down by iOS after the user is taken to the facebook app as part of the log in process, then set this property to `YES.`
+`@property BOOL preventAppShutDown` - iOS 8 incorporates a different Memory Management Policy. If you find that your app is getting shut down by iOS after the user is taken to the Facebook app as part of the log in process, then set this property to `YES.`
 
 `@property BOOL facebookLoggingBehaviourOn` - For diagnostic purposes, if you want the FacebookSDK to log full details (in the debug window) on what it is doing behind the scenes, then set this property to `YES.`
 
