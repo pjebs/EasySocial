@@ -38,7 +38,7 @@ Installation
 ### Second Part
 1. [Download](https://developers.facebook.com/docs/ios/getting-started/#sdk) and [Add `FacebookSDK.framework`](https://developers.facebook.com/docs/ios/getting-started/#configure)into your project.
 2. [Register your app with Facebook to get an App ID](https://developers.facebook.com/docs/ios/getting-started/#appid)
-	- Ensure that the `Bundle ID` you give your app on XCode matches what you register with facebook
+	- Ensure that the `Bundle ID` you give your app on XCode matches what you register with Facebook
 	- Ensure that you enable `"Single Sign On"` in Facebook
 	- [Configure](https://developers.facebook.com/docs/ios/getting-started/#configurePlist) the `<Your Project Name>-Info.plist` file by inserting `FacebookAppID`, `FacebookDisplayName` and `URL types` keys
 	- Register your own facebook account as a `Developer` account. That way you can test your app while you are developing it. In production, Facebook must approve your app to use some features
@@ -96,7 +96,7 @@ Once you discover the required account, set it.
 ```
 ### Methods - Sending Tweets
 
-A Tweet is a (*max*) 140 character `message` that is propagated to other Twitter users via the *Twittersphere*. URL links can be embedded in the `message.` They are automatically detected and *minimized* to save characters. Images can also be attached. All images are uploaded to Twitter's servers.
+A Tweet is a (*max*) 140 character `message` that is propagated to other Twitter users via the *Twittersphere*. URL links can be embedded in the `message.` They are automatically detected and *minified* to save characters. Images can also be attached. All images are uploaded to Twitter's servers.
 
 ```objective-c
 //Plain Tweet
@@ -109,13 +109,13 @@ A Tweet is a (*max*) 140 character `message` that is propagated to other Twitter
 
 `(NSString *) message` is the message to tweet.
 
-`(NSData *) image` refers to an image. If you have a `UIImage` object, it must be converted to a `NSData` object by using [`UIImageJPEGRepresentation`](https://developer.apple.com/library/ios/documentation/uikit/reference/UIKitFunctionReference/index.html#//apple_ref/c/func/UIImageJPEGRepresentation) or [`UIImagePNGRepresentation.`](https://developer.apple.com/library/ios/documentation/uikit/reference/UIKitFunctionReference/index.html#//apple_ref/c/func/UIImagePNGRepresentation)
+`(NSData *) image` refers to an image. If you have a `UIImage` object, it must be converted to a `NSData` object by using [`UIImageJPEGRepresentation()`](https://developer.apple.com/library/ios/documentation/uikit/reference/UIKitFunctionReference/index.html#//apple_ref/c/func/UIImageJPEGRepresentation) or [`UIImagePNGRepresentation().`](https://developer.apple.com/library/ios/documentation/uikit/reference/UIKitFunctionReference/index.html#//apple_ref/c/func/UIImagePNGRepresentation)
 
 `(NSString *) mimeType` refers to the [Mime Type](http://en.wikipedia.org/wiki/Internet_media_type) of the image. It should be one of `image/png,` `image/jpeg,` or `image/gif.` If unspecified, `image/png` will be assumed.
 
 `(NSURL *) imageURL` refers to the URL address of the image file. It's [Mime Type](http://en.wikipedia.org/wiki/Internet_media_type) will be guessed by the file's extension.
 
-`(BOOL) show` is *private* argument. Always set it to `YES.`
+`(BOOL) show` is a *private* argument. Always set it to `YES.`
 
 `NSDictionary *JSONError` is part of the response back from [Twitter's REST API](https://dev.twitter.com/rest/reference/post/statuses/update). If `JSONError == nil,` the tweet was posted successfully. If it is not `nil,`there was an issue.
 
@@ -139,7 +139,7 @@ If `issue == EasyTwitterNoAccountSet,` it means that you attempted to send a twe
 
 ### Methods - Timeline
 
-A user's `home-timeline` represents the most recent tweets and retweets. It should be noted that the [`home-time`](https://dev.twitter.com/rest/reference/get/statuses/home_timeline)is different from the [`user-timeline.`](https://dev.twitter.com/rest/reference/get/statuses/user_timeline)
+A user's `home-timeline` represents the most recent tweets and retweets. It should be noted that the [`home-timeline`](https://dev.twitter.com/rest/reference/get/statuses/home_timeline)is different from the [`user-timeline.`](https://dev.twitter.com/rest/reference/get/statuses/user_timeline)
 
 ```objective-c
 - (void)loadTimelineWithCount:(int) count completion:(void (^)(NSArray *data, NSError *error))completion;
@@ -178,11 +178,129 @@ The delegate methods are called before and after:
 
 * `requestPermissionForAppToUseTwitterSuccess:failure:`
 * `sendTweetWithMessage:image:mimeType:requestShowLoadScreen:twitterResponse:failure:`
-* `sendTweetWithMessage: imageURL:twitterResponse:failure:`
+* `sendTweetWithMessage:imageURL:twitterResponse:failure:`
 * `sendTweetWithMessage:twitterResponse:failure:`
 * `loadTimelineWithCount:completion:`
 
 EasyFacebook
 ------------
+
+### Methods
+
+Before you can use EasyFacebook, you must instantiate the `EasyFacebook` class.
+
+```objective-c
++ (EasyFacebook *)sharedEasyFacebookClient
+```
+
+The class is a singleton class meaning only one is **ever** created. In practice, the class is automatically instantiated without any action on your part. You can use the class by typing: `[EasyFacebook sharedEasyFacebookClient].XXX` or `[[EasyFacebook sharedEasyFacebookClient] XXX].`
+
+### Methods - Log in & Log out
+
+Before you can interact with the FacebookSDK, you must have a logged in user.
+
+```objective-c
+- (void)openSession;  //For logging in
+- (void)closeSession; //For logging out
+- (BOOL)isLoggedIn;   //For checking logged in status
+```
+
+By calling the `openSession` method, the user will undergo the standard logging in process. This usually involves opening up the official Facebook app (if installed). Otherwise Safari browser will be opened instead. The user will be asked to grant permission to your app to access their details. Once approved, any future calls to `openSession` will briefly open up the Facebook app but will almost immediately transfer back to your app - since the user had already granted approval in the past (provided the approval is not later revoked).
+
+The `closeSession` method will immediately log out the user.
+
+The `(BOOL)isLoggedIn` method will return whether the user is currently logged in or out.
+
+If the user logs in and later exits your app, a cached token will usually be saved locally. When you app is opened again, the user will usually not have to log in again. This is part of the **Auto-Log In** feature.
+
+For security reasons, if you want to turn off **Auto-Log In** behaviour, you can listen to [UIApplicationWillTerminateNotification](https://developer.apple.com/Library/ios/documentation/UIKit/Reference/UIApplication_Class/index.html#//apple_ref/c/data/UIApplicationWillTerminateNotification) and call `closeSession` to log out the user.
+
+When the user is being logged in, the FacebookSDK requires the initial permissions requested.
+The default permissions are:
+
+* [`public_profile`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-public_profile)
+* [`email`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-email)
+* [`user_friends`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-user_friends)
+
+If you want to modify the permissions requested, **before** calling `openSession` you can set `readPermissions:`
+
+```objective-c
+//Set the readPermissions to what ever you want
+[EasyFacebook sharedEasyFacebookClient].readPermissions = @[@"public_profile", @"email", @"user_friends"];
+```
+
+Read the `Notifications` section if you want to know state changes are available to you.
+
+### Methods - Fetching basic user information
+
+After the user logs in, a call to fetch the user's basic information is automatically done. However, if you want the latest information on demand then call this method.
+
+```objective-c
+- (void)fetchUserInformation
+```
+Once the information arrives, the `EasyFacebookUserInfoFetchedNotification` notification is posted. Once posted, you can extract the latest details using these properties:
+
+* [`@property NSString *UserEmail`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-email) - Only available if `email` permission is requested. By default, it is requested.
+* [`@property NSString *UserFirstName`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+* [`@property NSString *UserGender`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+* [`@property NSString *UserObjectID`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference) - usually referred to as `id`
+* [`@property NSString *UserLastName`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+* [`@property NSString *UserLink`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+* [`@property NSString *UserLocale`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+* [`@property NSString *UserName`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+* [`@property NSString *UserTimeZone`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+* [`@property NSString *UserVerified`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
+
+### Methods - Publishing
+
+Publishing to the timeline requires the [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission. You will also require Facebook approval once your app is ready to go to production.
+
+```objective-c
+- (BOOL)isPublishPermissionsAvailableQuickCheck; //Quicker (and usually good enough)
+- (void)isPublishPermissionsAvailableFullCheck:(void(^)(BOOL result, NSError *error))responseHandler;
+- (void)requestPublishPermissions:(void(^)(BOOL granted, NSError *error))responseHandler;
+
+//Method to actually publish/share
+- (void)publishStoryWithParams:(NSDictionary *)params completion:(void(^)(BOOL success, NSError *error))completion;
+```
+
+
+
+### Notifications
+
+`EasyFacebookLoggedInNotification` - Posted when the user successfully logs in. The notification is also posted after an auto-log in.
+
+`EasyFacebookLoggedOutNotification` - Posted when the user logs out intentionally or due to unexpected reasons.
+
+`EasyFacebookUserInfoFetchedNotification` - Posted when the user's basic information becomes available. This will happen automatically shortly after the user logs in, or after `fetchUserInformation` method is explicitly called. See above for information on what basic information is available.
+
+`EasyFacebookUserCancelledLoginNotification` - Posted when the user is given the opportunity to log in but decides to cancel the process. The user is usually taken outside the app to the official Facebook app to log in. If the app is not installed, Safari browser is opened with the log in dialog shown via a website.
+
+`EasyFacebookPublishPermissionGrantedNotification` - Posted when the user grants permission for the app to publish on their timeline.
+
+`EasyFacebookPublishPermissionDeclinedNotification` - Posted when the user declines to grant permission for the app to publish on their timeline.
+
+`EasyFacebookStoryPublishedNotification` - Posted when the share attempt is successfully published on the user's timeline.
+
+### EasyFacebookDelegate
+
+Both methods prescribed in the protocol are `optional.` You will have to set the `delegate` property appropriately to subscribe to the protocol. It may be useful to implement them as demonstrated in the accompanying`Example Project.` 
+
+`showLoadingScreen:` is called **before** a potentially time-consuming activity begins.
+`hideLoadingScreen:` is called **after** a time-consuming activity finishes.
+
+It is expected that you show the user that background activity is occurring via a UI element.
+
+The delegate methods are called before and after:
+
+* `publishStoryWithParams:completion:`
+
+### Diagnostics
+
+`@property BOOL preventAppShutDown` - iOS 8 incorporated a different Memory Management Policy. If you find that your app is getting shut down by iOS after the user is taken to the facebook app as part of the log in process, then set this property to `YES.`
+
+`@property BOOL facebookLoggingBehaviourOn` - For diagnostic purposes, if you want the FacebookSDK to log full details (in the debug window) on what it is doing behind the scenes, then set this property to `YES.`
+
+
 
 
