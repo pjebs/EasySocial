@@ -337,5 +337,8 @@ The delegate methods are called before and after:
 `@property BOOL facebookLoggingBehaviourOn` - For diagnostic purposes, if you want the FacebookSDK to log full details (in the debug window) on what it is doing behind the scenes, then set this property to `YES.`
 
 
+Final Notes
+------------
 
+If you found this library useful, please **Star** it on github. Feel free to fork or provide pull requests. Any bug reports will be warmly received.
 
