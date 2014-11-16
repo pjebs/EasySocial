@@ -275,26 +275,29 @@ To publish and share content, [`publish_actions`](https://developers.facebook.co
 - (void)publishStoryWithParams:(NSDictionary *)params completion:(void(^)(BOOL success, NSError *error))completion
 ```
 
-`(NSDictionary *)params` 
+`(NSDictionary *)params` can have [these parameters](https://developers.facebook.com/docs/ios/share#link):
 
-NSDictionary *params = @{@"link" : @"the url we want to share.",
-        @"name" : @"a title.",
-        @"caption" : @"a subtitle.",
-        @"picture" : @"the url of a thumbnail to associate with the post.",
-        @"description" : @"a snippet of text describing the content of the link.",
-        @"message" : @"main message appears above everything else"
-    };
+* [link](https://developers.facebook.com/docs/reference/ios/current/class/FBLinkShareParams#link) - the url we want to share
+* [name](https://developers.facebook.com/docs/reference/ios/current/class/FBLinkShareParams#name) - a title
+* [caption](https://developers.facebook.com/docs/reference/ios/current/class/FBLinkShareParams#caption) - a subtitle
+* [picture](https://developers.facebook.com/docs/reference/ios/current/class/FBLinkShareParams#picture) - the url of a thumbnail to associate with the post
+* [description](https://developers.facebook.com/docs/reference/ios/current/class/FBLinkShareParams#linkDescription) - a snippet of text describing the content of the link
+* message - main message appears above everything else
 
+`BOOL success` will be the response in the `completion` block. If `success==YES,` the share post was successful.
 
+As an example:
 
+```objective-c
 NSDictionary *params = @{@"link" : @"http://www.google.com",
-                             @"name" : @"Google",
-                             @"caption" : @"#1 search engine",
-                             @"picture" : @"https://www.google.com/images/srpr/logo11w.png",
-                             @"description" : @"Home page Logo",
-                             @"message" : @"hello"
-                             };
-
+                         @"name" : @"Google",
+                         @"caption" : @"#1 search engine",
+                         @"picture" : @"https://www.google.com/images/srpr/logo11w.png",
+                         @"description" : @"Home page Logo",
+                         @"message" : @"hello"
+                        };
+```
+The output will be:
 
 ![Screen shot of a sample Share Post](https://raw.github.com/pjebs/EasySocial/master/share_post.png)
 
