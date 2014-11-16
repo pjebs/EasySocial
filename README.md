@@ -142,7 +142,7 @@ If `issue == EasyTwitterNoAccountSet,` it means that you attempted to send a twe
 A user's `home-timeline` represents the most recent tweets and retweets. It should be noted that the [`home-timeline`](https://dev.twitter.com/rest/reference/get/statuses/home_timeline)is different from the [`user-timeline.`](https://dev.twitter.com/rest/reference/get/statuses/user_timeline)
 
 ```objective-c
-- (void)loadTimelineWithCount:(int) count completion:(void (^)(NSArray *data, NSError *error))completion;
+- (void)loadTimelineWithCount:(int) count completion:(void (^)(NSArray *data, NSError *error))completion
 ```
 
 `(int) count` refers to how many recent items from the home-timeline you want returned. The maximum is 200.
@@ -200,9 +200,9 @@ The class is a singleton class meaning only one is **ever** created. In practice
 Before you can interact with the FacebookSDK, you must have a logged in user.
 
 ```objective-c
-- (void)openSession;  //For logging in
-- (void)closeSession; //For logging out
-- (BOOL)isLoggedIn;   //For checking logged in status
+- (void)openSession  //For logging in
+- (void)closeSession //For logging out
+- (BOOL)isLoggedIn   //For checking logged in status
 ```
 
 By calling the `openSession` method, the user will undergo the standard logging in process. This usually involves opening up the official Facebook app (if installed). Otherwise Safari browser will be opened instead. The user will be asked to grant permission to your app to access their details. Once approved, any future calls to `openSession` will briefly open up the Facebook app but will almost immediately transfer back to your app - since the user had already granted approval in the past (provided the approval is not later revoked).
@@ -211,7 +211,7 @@ The `closeSession` method will immediately log out the user.
 
 The `(BOOL)isLoggedIn` method will return whether the user is currently logged in or out.
 
-If the user logs in and later exits your app, a cached token will usually be saved locally. When you app is opened again, the user will usually not have to log in again. This is part of the **Auto-Log In** feature.
+If the user logs in and later exits your app, a cached token will usually be saved locally. When your app is opened again, the user will usually not have to log in again. This is part of the **Auto-Log In** feature.
 
 For security reasons, if you want to turn off **Auto-Log In** behaviour, you can listen to [UIApplicationWillTerminateNotification](https://developer.apple.com/Library/ios/documentation/UIKit/Reference/UIApplication_Class/index.html#//apple_ref/c/data/UIApplicationWillTerminateNotification) and call `closeSession` to log out the user.
 
@@ -229,7 +229,7 @@ If you want to modify the permissions requested, **before** calling `openSession
 [EasyFacebook sharedEasyFacebookClient].readPermissions = @[@"public_profile", @"email", @"user_friends"];
 ```
 
-Read the `Notifications` section if you want to know state changes are available to you.
+Read the `Notifications` section below if you want to what know state changes are available to you.
 
 ### Methods - Fetching basic user information
 
@@ -243,7 +243,7 @@ Once the information arrives, the `EasyFacebookUserInfoFetchedNotification` noti
 * [`@property NSString *UserEmail`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-email) - Only available if `email` permission is requested. By default, it is requested.
 * [`@property NSString *UserFirstName`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
 * [`@property NSString *UserGender`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
-* [`@property NSString *UserObjectID`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference) - usually referred to as `id`
+* [`@property NSString *UserObjectID`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference) - usually referred to as `id` (unique to the user - store in databases)
 * [`@property NSString *UserLastName`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
 * [`@property NSString *UserLink`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
 * [`@property NSString *UserLocale`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
@@ -251,18 +251,40 @@ Once the information arrives, the `EasyFacebookUserInfoFetchedNotification` noti
 * [`@property NSString *UserTimeZone`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
 * [`@property NSString *UserVerified`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference)
 
-### Methods - Publishing
+### Methods - Publishing Rights
 
 Publishing to the timeline requires the [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission. You will also require Facebook approval once your app is ready to go to production.
 
 ```objective-c
-- (BOOL)isPublishPermissionsAvailableQuickCheck; //Quicker (and usually good enough)
-- (void)isPublishPermissionsAvailableFullCheck:(void(^)(BOOL result, NSError *error))responseHandler;
-- (void)requestPublishPermissions:(void(^)(BOOL granted, NSError *error))responseHandler;
-
-//Method to actually publish/share
-- (void)publishStoryWithParams:(NSDictionary *)params completion:(void(^)(BOOL success, NSError *error))completion;
+- (BOOL)isPublishPermissionsAvailableQuickCheck
+- (void)isPublishPermissionsAvailableFullCheck:(void(^)(BOOL result, NSError *error))responseHandler
+- (void)requestPublishPermissions:(void(^)(BOOL granted, NSError *error))responseHandler
 ```
+
+`(BOOL)isPublishPermissionsAvailableQuickCheck` checks if [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission is granted to the current `access token`. It is 99% accurate since the permissions granted could have changed since the `access token` was issued. The permissions could also be changed by the user *via* the Facebook website external to your app. The method will immediately return however since it does not make any REST API calls.
+
+`(void)isPublishPermissionsAvailableFullCheck` will perform a 100% accurate check for [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission. It will make a REST API call and will return with a `BOOL result` response. If `result==YES,` then publishing permission is available.
+
+If publishing permission is not available, you will have to request it by calling `(void)requestPublishPermissions` method. A response where `success==YES` will indicate that the user has granted permission.
+
+### Methods - Publishing Content
+
+To publish and share content, [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission is required. By calling the `publishStoryWithParams:completion:` method below, it automatically also calls `requestPublishPermissions:.`
+
+```objective-c
+- (void)publishStoryWithParams:(NSDictionary *)params completion:(void(^)(BOOL success, NSError *error))completion
+```
+
+`(NSDictionary *)params` 
+
+NSDictionary *params = @{@"link" : @"the url we want to share.",
+        @"name" : @"a title.",
+        @"caption" : @"a subtitle.",
+        @"picture" : @"the url of a thumbnail to associate with the post.",
+        @"description" : @"a snippet of text describing the content of the link.",
+        @"message" : @"main message appears above everything else"
+    };
+
 
 
 
@@ -297,7 +319,7 @@ The delegate methods are called before and after:
 
 ### Diagnostics
 
-`@property BOOL preventAppShutDown` - iOS 8 incorporated a different Memory Management Policy. If you find that your app is getting shut down by iOS after the user is taken to the facebook app as part of the log in process, then set this property to `YES.`
+`@property BOOL preventAppShutDown` - iOS 8 incorporates a different Memory Management Policy. If you find that your app is getting shut down by iOS after the user is taken to the facebook app as part of the log in process, then set this property to `YES.`
 
 `@property BOOL facebookLoggingBehaviourOn` - For diagnostic purposes, if you want the FacebookSDK to log full details (in the debug window) on what it is doing behind the scenes, then set this property to `YES.`
 
