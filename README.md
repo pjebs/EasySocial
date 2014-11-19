@@ -265,7 +265,7 @@ Publishing to the timeline requires the [`publish_actions`](https://developers.f
 
 `(void)isPublishPermissionsAvailableFullCheck` will perform a 100% accurate check for [`publish_actions`](https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference-publish_actions) permission. It will make a REST API call and will return with a `BOOL result` response. If `result==YES,` then publishing permission is available.
 
-If publishing permission is not available, you will have to request it by calling `(void)requestPublishPermissions` method. A response where `success==YES` will indicate that the user has granted permission.
+If publishing permission is not available, you will have to request it by calling `(void)requestPublishPermissions` method. A response where `granted==YES` will indicate that the user has granted permission.
 
 ### Methods - Publishing Content
 
