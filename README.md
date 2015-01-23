@@ -27,7 +27,7 @@ Installation
 1. Add `Social.framework` to your project
 2. Add `Accounts.famework` to your project
 3. Drag the `EasySocial` folder into your project (Ensure you check `Copy items into destination group's folder`)
-4. Open `<Your Project Name>-Prefix.pch` file in the `Supporting Files` Folder within XCode.
+4. Open `<Your Project Name>-Prefix.pch` file in the `Supporting Files` Folder within XCode. For XCode 6, you will need to create a `pch` file [from scratch](http://stackoverflow.com/questions/24158648/why-isnt-projectname-prefix-pch-created-automatically-in-xcode-6).
 	- Add to the bottom:
 
 ```objective-c
