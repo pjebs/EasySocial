@@ -25,7 +25,7 @@ Installation
 
 ### CocoaPods
 
-pod 'EasySocial', '~> 3'
+pod 'EasySocial', '~> 1.0'
 
 ### First Part
 1. Add `Social.framework` to your project
