@@ -31,7 +31,7 @@ pod 'EasySocial', '~> 1.0'
 1. Add `Social.framework` to your project
 2. Add `Accounts.framework` to your project
 3. Drag the `EasySocial` folder into your project (Ensure you check `Copy items into destination group's folder`)
-4. Open `<Your Project Name>-Prefix.pch` file in the `Supporting Files` Folder within XCode. For XCode 6, you will need to create a `pch` file [from scratch](http://stackoverflow.com/questions/24158648/why-isnt-projectname-prefix-pch-created-automatically-in-xcode-6).
+4. Open `<Your Project Name>-Prefix.pch` file in the `Supporting Files` Folder within Xcode. For Xcode 6, you will need to create a `pch` file [from scratch](http://stackoverflow.com/questions/24158648/why-isnt-projectname-prefix-pch-created-automatically-in-xcode-6).
 	- Add to the bottom:
 
 ```objective-c
@@ -42,7 +42,7 @@ pod 'EasySocial', '~> 1.0'
 ### Second Part
 1. [Download](https://developers.facebook.com/docs/ios/getting-started/#sdk) and [Add `FacebookSDK.framework`](https://developers.facebook.com/docs/ios/getting-started/#configure)into your project.
 2. [Register your app with Facebook to get an App ID](https://developers.facebook.com/docs/ios/getting-started/#appid)
-	- Ensure that the `Bundle ID` you give your app on XCode matches what you register with Facebook
+	- Ensure that the `Bundle ID` you give your app on Xcode matches what you register with Facebook
 	- Ensure that you enable `"Single Sign On"` in Facebook
 	- [Configure](https://developers.facebook.com/docs/ios/getting-started/#configurePlist) the `<Your Project Name>-Info.plist` file by inserting `FacebookAppID`, `FacebookDisplayName` and `URL types` keys
 	- Register your own facebook account as a `Developer` account. That way you can test your app while you are developing it. In production, Facebook must approve your app to use some features
